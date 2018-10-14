@@ -1,0 +1,136 @@
+#print {
+	border: 1px solid #000;
+	font-family: sans-serif;
+	height: 120mm;
+	max-height: 120mm;
+	min-height: 120mm;
+	width: 75mm;
+	max-width: 75mm;
+	min-width: 75mm;
+	margin: 0mm;
+	padding: 2mm;
+	overflow: hidden;
+}
+	
+div.transit div#hold {
+	font-size: 15mm;
+	height: 15mm;
+	margin: 0;
+	padding: 0;
+}
+
+div.transit div#destinationBranch {
+	font-size: 15mm;
+	height: 15mm;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 5mm;
+}
+
+div.transit div#item {
+	height: 6mm;
+	margin: 0;
+	padding: 0;
+}
+
+div.transit div#title {
+	height: 18mm;
+	width: 70mm;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+}
+
+div.transit div#checkinDateTime {
+	height: 60mm;
+	display: table-cell;
+	vertical-align: bottom;
+}
+
+div.dueSlip {
+	font-size: 4mm;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+div.dueSlip div#header {
+	display: table-cell;
+	font-weight: bold;
+	text-align: center;
+	width: 60mm;
+	margin: 0;
+	padding: 0;
+}
+
+div.dueSlip div#item {
+	display: table-cell;
+	width: 10mm;
+	margin: 0;
+	padding: 0;
+}
+
+div.dueSlip div#limitless {
+	font-size: 8mm;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	padding-top: 5mm;
+	padding-bottom: 0;
+}
+
+div.dueSlip dl {
+	display: table;
+	width: 70mm;
+	margin: 0;
+	padding: 0;
+	padding-top: 5mm;
+}
+
+div.dueSlip dl dt {
+	display: table-cell;
+	height: 10mm;
+	overflow: hidden;
+	float: left;
+	margin: 0;
+	padding: 0;
+	width: 20mm;
+}
+
+div.dueSlip dl dd {
+	display: table-cell;
+	height: 10mm;
+	float: left;
+	margin: 0;
+	padding: 0;
+	width: 50mm;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+div.dueSlip div#footer {
+	height: 30mm;
+	width: 70mm;
+	margin: 0;
+	padding: 0;
+}
+
+div.dueSlip div#customNotes {
+	border-top: 1px solid #000;
+	height: 15mm;
+	width: 70mm;
+	margin: 0;
+	padding: 0;
+}
+
+@media print {
+	form {
+		display: none;
+	}
+}
+
+@page {
+	size: 80mm 135mm;
+	margin: 0;
+}
+
