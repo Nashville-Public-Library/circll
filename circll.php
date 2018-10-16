@@ -9,7 +9,7 @@ function printReceipt () {
 	var oPrintDiv = document.getElementById("print");
 	oPrintDiv.style.visibility = "visible";
 	window.print();
-	oPrintDiv.style.visibility = "hidden";
+//	oPrintDiv.style.visibility = "hidden";
 };
 </script>
 
@@ -135,6 +135,8 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 		$receipt .= "<div id='receipt' class='transit'>";
 		if ($alertType == '02') {
 			$receipt .= "<div id='hold'>HOLD</div>"; 
+		} else {
+			$receipt .= "<div id='hold'> </div>";
 		}
 		$receipt .= "<div id='destinationBranch' data-destinationBranch=$destinationBranch>$destinationBranch</div>"; 
 		$receipt .= "<div id='item' data-item=$item>ITEM NUMBER: $item</div>"; 

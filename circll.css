@@ -76,42 +76,53 @@ input#submit {
 
 #print {
 	border: 1px solid #000;
-	font-family: sans-serif;
-	height: 120mm;
-	max-height: 120mm;
-	min-height: 120mm;
+	font-family: tahoma, verdana, arial, sans-serif;
+	height: 130mm;
+	max-height: 130mm;
+	min-height: 130mm;
 	width: 75mm;
 	max-width: 75mm;
 	min-width: 75mm;
-	margin: 0mm;
+	margin: 0mm auto;
 	padding: 2mm;
 	overflow: hidden;
+}
+
+#print div {
+	text-align: left;
 }
 	
 div.transit div#hold {
 	font-size: 15mm;
 	height: 15mm;
+	max-height: 15mm;
+	min-height: 15mm;
 	margin: 0;
 	padding: 0;
+	text-align: center;
 }
 
 div.transit div#destinationBranch {
 	font-size: 15mm;
 	height: 15mm;
+	max-height: 15mm;
+	min-height: 15mm;
 	margin: 0;
 	padding: 0;
 	padding-bottom: 5mm;
+	text-align: center;
 }
 
 div.transit div#item {
 	height: 6mm;
 	margin: 0;
 	padding: 0;
+	padding-top: 5mm;
 }
 
 div.transit div#title {
-	height: 18mm;
-	width: 70mm;
+	height: 16mm;
+	width: 68mm;
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
@@ -147,17 +158,19 @@ div.dueSlip div#item {
 }
 
 div.dueSlip div#limitless {
-	font-size: 8mm;
+	font-family: 'Arial Black',sans-serif;
+	font-size: 6.5mm;
 	text-align: center;
 	margin: 0;
 	padding: 0;
 	padding-top: 5mm;
 	padding-bottom: 0;
+	width: 68mm;
 }
 
 div.dueSlip dl {
 	display: table;
-	width: 70mm;
+	width: 68mm;
 	margin: 0;
 	padding: 0;
 	padding-top: 5mm;
@@ -176,17 +189,18 @@ div.dueSlip dl dt {
 div.dueSlip dl dd {
 	display: table-cell;
 	height: 10mm;
+	overflow: hidden;
 	float: left;
 	margin: 0;
 	padding: 0;
-	width: 50mm;
-	font-weight: bold;
+	width: 48mm;
+	font-family: 'Arial Black',sans-serif;
 	text-transform: uppercase;
 }
 
 div.dueSlip div#footer {
 	height: 30mm;
-	width: 70mm;
+	width: 68mm;
 	margin: 0;
 	padding: 0;
 }
@@ -194,13 +208,13 @@ div.dueSlip div#footer {
 div.dueSlip div#customNotes {
 	border-top: 1px solid #000;
 	height: 15mm;
-	width: 70mm;
+	width: 68mm;
 	margin: 0;
 	padding: 0;
 }
 
 @media print {
-	form {
+	#screen {
 		display: none;
 	}
 }
