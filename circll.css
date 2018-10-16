@@ -1,3 +1,79 @@
+#screen {
+	background: none;
+	margin: 0 auto;
+	margin-top:10%;
+	max-width:30%;
+	min-width:400px;
+	clear:both;
+	color:#fff;
+	font-size: 100%;
+	font-family: Arial, 'Lucida Sans Unicode';
+	line-height:1.5;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#formHeader {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; 
+	background-color:#30388d;
+	margin:1% 0;
+	padding:1% 0;
+	font-size:1.5em;
+	background-color:none;
+	font-family: 'Calibri';
+	text-shadow: -1px 1px 1px #000;
+}
+
+#formFooter {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; 
+	background-color:#30388d;
+	padding:1% 0;
+	margin:0px;
+	margin-bottom:1%;
+	font-family: 'Calibri';
+	text-shadow: -1px 1px 1px #000;
+	font-size:1.2em;
+}
+
+form {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; 
+	background-color:#f26531;
+	padding:4%;
+	margin-bottom:1%;
+	font-family: 'Calibri';	
+	font-size:1.2em;
+}
+
+form div.row {
+	display: table-row;
+}
+
+input, form div label {
+	display: table-cell;
+	text-align: left;
+}
+
+input {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	width: 15em;
+}
+
+input#submit {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; 
+	text-align: center;
+	width: 6em;
+}
+
 #print {
 	border: 1px solid #000;
 	font-family: sans-serif;
