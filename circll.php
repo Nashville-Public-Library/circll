@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+<title>circll</title>
 <link rel="stylesheet" type="text/css" href="./circll.css">
 
 <script type="text/javascript">
@@ -9,18 +9,40 @@ function printReceipt () {
 	var oPrintDiv = document.getElementById("print");
 	oPrintDiv.style.visibility = "visible";
 	window.print();
+	oPrintDiv.style.visibility = "hidden";
 };
 </script>
 
 </head>
+
+<?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	$item = htmlspecialchars(stripslashes(trim($_POST["item"])));
+	$nbduedate = htmlspecialchars(stripslashes(trim($_POST["nbduedate"])));
+	$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));
+	if (!empty($nbduedate)) {
+		$nbduedate = strtotime($nbduedate);
+	}
+} else { // TESTING
+//	$item = '35192038783290';
+//	$nbduedate = strtotime('2019-01-31');
+}
+
+?>
+
 <body>
 
-<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-  <label for='item'>Item Barcode: </label><input type="text" id="item" name="item">
-  <label for='nbduedate'>NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="">
-  <label for='customNotes'>Custom Notes: </label><input type="text" id="customNotes" name="customNotes">
-<input type="submit" name="submit" value="Submit">
-</form>
+<div id="screen">
+  <header id="formHeader">Limitless Libraries</header>
+  <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
+    <div class="row"><label for="item">Item Barcode: </label><input type="text" id="item" name="item" autofocus></div>
+    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div>
+    <div class="row"><label for="customNotes">Custom Notes: </label><input type="text" id="customNotes" name="customNotes" value="<?php if(isset($customNotes)){echo $customNotes;} ?>"></div>
+    <div class="row"><label for="submit"> </label><input type="submit" id="submit" name="submit" value="Submit"></div>
+  </form>
+  <footer id="formFooter">Have a Nice Day</footer>
+</div>
 
 <?php
 
@@ -34,17 +56,6 @@ if (empty($patronApiWsdl)) {
 		$catalogApiReportMode	= $configArray['Catalog']['catalogApiReportMode'];
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$item = htmlspecialchars(stripslashes(trim($_POST["item"])));
-	$nbduedate = htmlspecialchars(stripslashes(trim($_POST["nbduedate"])));
-	$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));
-	if (!empty($nbduedate)) {
-		$nbduedate = strtotime($nbduedate);
-	}
-} else { // TESTING
-	$item = '35192038783290';
-	$nbduedate = strtotime('2019-01-31');
-}
 initMemcache();
 $receipt = checkout($item,$nbduedate,$customNotes);
 $css = file_get_contents('./circll.css');
@@ -173,6 +184,15 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 	$resultPatron 				= '';
 	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag);
 	if($resultPatron->response->ResponseStatuses->ResponseStatus->ShortMessage == 'Successful operation') {
+		$borrowerTypeCode		= (int) $resultPatron->response->Patron->PatronType;
+		if ($borrowerTypeCode == 35 || $borrowerTypeCode == 36 || borrowerTypeCode == 37) {
+			$receipt	= "<div id='print' class='error'>";
+			$receipt	.= "<div id='message'>NON-DELIVERY PATRON</div>";
+			$receipt	.= "<div id='checkinDateTime' data-checkinDateTime=$checkinDateTime>$checkinDateTime</div>"; 
+			$receipt	.= "</div>";
+			$receipt	.= "</div>";
+			return $receipt;
+		}
 		$patronNameLast			= $resultPatron->response->Patron->LastName;
 		$patronNameFirst		= $resultPatron->response->Patron->FirstName;
 		$patronNameMiddle		= $resultPatron->response->Patron->MiddleName;
@@ -195,32 +215,13 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 				}
 			}
 		}
-		$borrowerTypeCode	= (int) $resultPatron->response->Patron->PatronType;
 		if (!empty($borrowerTypeCode)) {
-
-/*
-			$borrowerTypeName = $memcache->get('carlx_borrowerTypeCode_' . $borrowerTypeCode);
-			if (!empty($borrowerTypeName) and isset($borrowerTypeName)) {
-			} else {
-				$requestName					= 'getBorrowerTypeInformation';
-				$tag						= $requestName;
-				$requestBorrowerType				= new stdClass();
-				$requestBorrowerType->BorrowerTypeSearchType	= 'Borrower Type Code';
-				$requestBorrowerType->BorrowerTypeSearchValue	= $borrowerTypeCode;
-				$requestBorrowerType->Modifiers			= '';
-				$resultBorrowerType				= callAPI($catalogApiWsdl, $requestName, $requestBorrowerType, $tag);
-				if ($resultBorrowerType && $resultBorrowerType->response->BorrowerTypeInfo) {
-					$borrowerTypeName			= $resultBorrowerType->response->BorrowerTypeInfo->BorrowerTypeName;
-					$memcache->add('carlx_borrowerTypeCode_' . $borrowerTypeCode, $borrowerTypeName, false, 86400);
-				}
-			}
-*/
-
-			$borrowerClass = 'mumble';
-			$borrowerGrade = 'grumble';
+			$borrowerClass = '';
+			$borrowerGrade = '';
 			switch (true) {
 				case $borrowerTypeCode==13:
 					$borrowerClass	= 'Staff';
+					$borrowerGrade	= '';
 					break;
 				case $borrowerTypeCode==21:
 					$borrowerClass	= 'Student';
@@ -233,6 +234,10 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 				case $borrowerTypeCode >= 23 && $borrowerTypeCode <= 34: 
 					$borrowerClass	= 'Student';
 					$borrowerGrade	= $borrowerTypeCode - 22;
+					break;
+				case $borrowerTypeCode==40:
+					$borrowerClass	= 'MNPS Librarian';
+					$borrowerGrade	= '';
 					break;
 				case $borrowerTypeCode==35:
 					$borrowerClass	= 'Student';
@@ -249,18 +254,13 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 					$borrowerGrade	= 'H';
 					$branchName	= 'NON-DELIVERY';
 					break;
-				case $borrowerTypeCode==40:
-					$borrowerClass	= 'MNPS Librarian';
-					break;
 				default:
 					$borrowerClass	= 'Student';
+					$borrowerGrade	= '';
+					$branchName	= '';
 					break;
 			}
 		}
-var_dump($borrowerTypeCode);
-var_dump($borrowerClass);
-var_dump($borrowerGrade);
-
 		$sponsorName	= $resultPatron->response->Patron->SponsorName;
 		$receipt 	= '<div id="print"><div id="receipt" class="dueSlip">';
 		$receipt 	.= '<div id="header">Only to be removed by NPL</div>';
