@@ -1,7 +1,7 @@
 #screen {
 	background: none;
 	margin: 0 auto;
-	margin-top:10%;
+	margin-top:5%;
 	max-width:30%;
 	min-width:400px;
 	clear:both;
@@ -109,7 +109,14 @@ div.transit div#destinationBranch {
 	min-height: 15mm;
 	margin: 0;
 	padding: 0;
-	padding-bottom: 5mm;
+	padding-bottom: 2mm;
+	text-align: center;
+}
+
+div.transit div#destinationBranchName {
+	margin: 0;
+	padding: 0;
+	padding-bottom: 2mm;
 	text-align: center;
 }
 
@@ -117,7 +124,7 @@ div.transit div#item {
 	height: 6mm;
 	margin: 0;
 	padding: 0;
-	padding-top: 5mm;
+	padding-top: 8mm;
 }
 
 div.transit div#title {
@@ -128,8 +135,18 @@ div.transit div#title {
 	padding: 0;
 }
 
+div.transit div#circNote {
+	height: 12mm;
+	width: 68mm;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	padding-top: 2mm;
+	padding-bottom: 2mm;
+}
+
 div.transit div#checkinDateTime {
-	height: 60mm;
+	height: 44mm;
 	display: table-cell;
 	vertical-align: bottom;
 }

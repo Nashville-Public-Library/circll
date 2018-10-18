@@ -127,21 +127,46 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 	$title			= isset($result['variable']['AJ']) ? implode($result['variable']['AJ']) : '';
 	$checkinDateTime	= isset($result['fixed']['TransactionDate']) ? date_format(date_create_from_format('Ymd    His', $result['fixed']['TransactionDate']), 'm/d/Y  h:i:s A') : date('m/d/Y  h:i:s A');
 	$mysip->patron		= isset($result['variable']['CY']) ? implode($result['variable']['CY']) : '';
-
-// IF DESTINATION BRANCH IS NOT A SCHOOL OR THERE IS NO PATRON ON HOLD, PRINT NPL TRANSIT SLIP
+//var_dump($mysip->patron);
+// IF DESTINATION BRANCH IS NOT A SCHOOL OR THERE IS NO PATRON ON HOLD, PRINT TRANSIT SLIP
 	if (preg_match('/^\D/', $destinationBranch) === 1 || $mysip->patron == '') {
 		$receipt = '<div id="print">';
-// TO DO: FLESH OUT CHECKIN->IN TRANSIT RECEIPT
 		$receipt .= "<div id='receipt' class='transit'>";
 		if ($alertType == '02') {
 			$receipt .= "<div id='hold'>HOLD</div>"; 
 		} else {
 			$receipt .= "<div id='hold'> </div>";
 		}
-		$receipt .= "<div id='destinationBranch' data-destinationBranch=$destinationBranch>$destinationBranch</div>"; 
-		$receipt .= "<div id='item' data-item=$item>ITEM NUMBER: $item</div>"; 
-		$receipt .= "<div id='title' data-title=$title>TITLE: $title</div>"; 
-		$receipt .= "<div id='checkinDateTime' data-checkinDateTime=$checkinDateTime>$checkinDateTime</div>"; 
+		if (preg_match('/^\d/', $destinationBranch) === 1) {
+			$destinationBranchName = $memcache->get('carlx_branchCode_' . $destinationBranch);
+			if (!empty($destinationBranchName) and isset($destinationBranchName)) {
+			} else {
+				global $catalogApiWsdl;
+				global $catalogApiDebugMode;
+				global $catalogApiReportMode;
+				$requestName				= 'getBranchInformation';
+				$tag					= $requestName;
+				$requestBranch				= new stdClass();
+				$requestBranch->BranchSearchType	= 'Branch Code';
+				$requestBranch->BranchSearchValue	= $destinationBranch;
+				$requestBranch->Modifiers		= new stdClass();
+				$requestPatron->Modifiers->DebugMode	= $catalogApiDebugMode;
+				$requestPatron->Modifiers->ReportMode	= $catalogApiReportMode;
+				$resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
+				if ($resultBranch && $resultBranch->response->BranchInfo) {
+					$destinationBranchName = $resultBranch->response->BranchInfo->BranchName;
+					$memcache->add('carlx_branchCode_' . $branchCode, $destinationBranchName, false, 86400);
+				}
+			}
+			$receipt .= "<div id='destinationBranch'>MNPS</div>"; 
+			$receipt .= "<div id='destinationBranchName'>$destinationBranchName</div>";
+		} else {
+			$receipt .= "<div id='destinationBranch>$destinationBranch</div>"; 
+		}
+		$receipt .= "<div id='item'>ITEM NUMBER: $item</div>"; 
+		$receipt .= "<div id='title'>TITLE: $title</div>"; 
+		$receipt .= "<div id='circNote'>MNPS LIBRARIAN: Check in this item and shelve it.</div>";
+		$receipt .= "<div id='checkinDateTime'>$checkinDateTime</div>"; 
 		$receipt .= "</div>";
 		$receipt .= "</div>";
 		return $receipt;
@@ -185,9 +210,10 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 	$requestPatron->Patron			= new stdClass();
 	$resultPatron 				= '';
 	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag);
+//var_dump($resultPatron);
 	if($resultPatron->response->ResponseStatuses->ResponseStatus->ShortMessage == 'Successful operation') {
 		$borrowerTypeCode		= (int) $resultPatron->response->Patron->PatronType;
-		if ($borrowerTypeCode == 35 || $borrowerTypeCode == 36 || borrowerTypeCode == 37) {
+		if ($borrowerTypeCode == 35 || $borrowerTypeCode == 36 || $borrowerTypeCode == 37) {
 			$receipt	= "<div id='print' class='error'>";
 			$receipt	.= "<div id='message'>NON-DELIVERY PATRON</div>";
 			$receipt	.= "<div id='checkinDateTime' data-checkinDateTime=$checkinDateTime>$checkinDateTime</div>"; 
@@ -239,6 +265,10 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 					break;
 				case $borrowerTypeCode==40:
 					$borrowerClass	= 'MNPS Librarian';
+					$borrowerGrade	= '';
+					break;
+				case $borrowerTypeCode==42:
+					$borrowerClass	= 'MNPS Library';
 					$borrowerGrade	= '';
 					break;
 				case $borrowerTypeCode==35:
