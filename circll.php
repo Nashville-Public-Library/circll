@@ -46,11 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!--
     <div class="row">
         <label for="nbduedate21">21-day due date: </label>
-	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(isset($nbduedate21)){echo $nbduedate21);} ?>">
+	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(isset($nbduedate21)){echo $nbduedate21;} ?>">
     </div>
     <div class="row">
         <label for="nbduedate42">42-day due date: </label>
-	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(isset($nbduedate42)){echo $nbduedate42);} ?>">
+	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(isset($nbduedate42)){echo $nbduedate42;} ?>">
     </div>
 -->
     <div class="row"><label for="customNotes">Custom Notes: </label><textarea form="circll" id="customNotes" name="customNotes" maxlength="150" rows="4" cols="20" value="<?php if(isset($customNotes)){echo $customNotes;} ?>"></textarea></div>
