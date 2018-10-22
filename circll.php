@@ -19,11 +19,11 @@ function printReceipt () {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$item = htmlspecialchars(stripslashes(trim($_POST["item"])));
-	$nbduedate = htmlspecialchars(stripslashes(trim($_POST["nbduedate"])));
+	$alias = htmlspecialchars(stripslashes(trim($_POST["alias"])));
+	$nbduedate07 = htmlspecialchars(stripslashes(trim($_POST["nbduedate07"])));
+	$nbduedate21 = htmlspecialchars(stripslashes(trim($_POST["nbduedate21"])));
+	$nbduedate42 = htmlspecialchars(stripslashes(trim($_POST["nbduedate42"])));
 	$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));
-	if (!empty($nbduedate)) {
-		$nbduedate = strtotime($nbduedate);
-	}
 } else { // TESTING
 //	$item = '35192038783290';
 //	$nbduedate = strtotime('2019-01-31');
@@ -35,10 +35,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div id="screen">
   <header id="formHeader">Limitless Libraries</header>
-  <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
+  <form id="circll" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
     <div class="row"><label for="item">Item Barcode: </label><input type="text" id="item" name="item" autofocus></div>
-    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div>
-    <div class="row"><label for="customNotes">Custom Notes: </label><input type="text" id="customNotes" name="customNotes" value="<?php if(isset($customNotes)){echo $customNotes;} ?>"></div>
+    <div class="row"><label for="alias">Staff initials: </label><input type="text" id="alias" name="alias" value="<?php if(isset($alias)){echo $alias;} ?>"></div>
+<!--    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div> -->
+    <div class="row">
+        <label for="nbduedate07">7-day DVD due date: </label>
+	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(isset($nbduedate07)){echo $nbduedate07;} ?>">
+    </div>
+<!--
+    <div class="row">
+        <label for="nbduedate21">21-day due date: </label>
+	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(isset($nbduedate21)){echo $nbduedate21);} ?>">
+    </div>
+    <div class="row">
+        <label for="nbduedate42">42-day due date: </label>
+	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(isset($nbduedate42)){echo $nbduedate42);} ?>">
+    </div>
+-->
+    <div class="row"><label for="customNotes">Custom Notes: </label><textarea form="circll" id="customNotes" name="customNotes" maxlength="150" rows="4" cols="20" value="<?php if(isset($customNotes)){echo $customNotes;} ?>"></textarea></div>
     <div class="row"><label for="submit"> </label><input type="submit" id="submit" name="submit" value="Submit"></div>
   </form>
   <footer id="formFooter">Have a Nice Day</footer>
@@ -47,17 +62,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php
 
 if (empty($patronApiWsdl)) {
-		$configArray		= parse_ini_file('config.pwd.ini', true, INI_SCANNER_RAW);
-		$patronApiWsdl		= $configArray['Catalog']['patronApiWsdl'];
-		$patronApiDebugMode	= $configArray['Catalog']['patronApiDebugMode'];
-		$patronApiReportMode	= $configArray['Catalog']['patronApiReportMode'];
-		$catalogApiWsdl		= $configArray['Catalog']['catalogApiWsdl'];
-		$catalogApiDebugMode	= $configArray['Catalog']['catalogApiDebugMode'];
-		$catalogApiReportMode	= $configArray['Catalog']['catalogApiReportMode'];
+		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_RAW);
+		$circulationApiLogin		= $configArray['Catalog']['circulationApiLogin'];
+		$circulationApiPassword		= $configArray['Catalog']['circulationApiPassword'];
+		$circulationApiWsdl		= $configArray['Catalog']['circulationApiWsdl'];
+		$circulationApiDebugMode	= $configArray['Catalog']['circulationApiDebugMode'];
+		$circulationApiReportMode	= $configArray['Catalog']['circulationApiReportMode'];
+		$patronApiWsdl			= $configArray['Catalog']['patronApiWsdl'];
+		$patronApiDebugMode		= $configArray['Catalog']['patronApiDebugMode'];
+		$patronApiReportMode		= $configArray['Catalog']['patronApiReportMode'];
+		$catalogApiWsdl			= $configArray['Catalog']['catalogApiWsdl'];
+		$catalogApiDebugMode		= $configArray['Catalog']['catalogApiDebugMode'];
+		$catalogApiReportMode		= $configArray['Catalog']['catalogApiReportMode'];
 }
 
 initMemcache();
-$receipt = checkout($item,$nbduedate,$customNotes);
+$receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
 $css = file_get_contents('./circll.css');
 $receipt = "<style>$css</style>" . $receipt;
 $receipt .= '<script>(function(){printReceipt();})();</script>';
@@ -65,14 +85,14 @@ echo $receipt;
 
 //////////////////// FUNCTIONS ////////////////////
 
-function callAPI($wsdl, $requestName, $request, $tag) {
+function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password = 'diploidmumboruin8') {
 	$connectionPassed = false;
 	$numTries = 0;
 	$result = new stdClass();
 	$result->response = "";
 	while (!$connectionPassed && $numTries < 3) {
 		try {
-			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1));
+			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1, 'login' => $login, 'password' => $password));
 			$result->response = $client->$requestName($request);
 			$connectionPassed = true;
 			if (is_null($result->response)) {$result->response = $client->__getLastResponse();}
@@ -104,13 +124,13 @@ function callAPI($wsdl, $requestName, $request, $tag) {
 	return $result;
 }
 
-function checkout($item,$nbduedate = '',$customNotes = '') {
+function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbduedate42 = '', $customNotes = '') {
 	global $memcache;
 	include('sip2.class.php');
 	date_default_timezone_set('America/Chicago');
-	$mysip			= new sip2;
-	$result			= $mysip->connect();
-	$mysip->patron		= '';
+	$mysip				= new sip2;
+	$result				= $mysip->connect();
+	$mysip->patron			= '';
 
 // ACS Status request
 //	$in = $mysip->msgSCStatus();
@@ -127,6 +147,7 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 	$title			= isset($result['variable']['AJ']) ? implode($result['variable']['AJ']) : '';
 	$checkinDateTime	= isset($result['fixed']['TransactionDate']) ? date_format(date_create_from_format('Ymd    His', $result['fixed']['TransactionDate']), 'm/d/Y  h:i:s A') : date('m/d/Y  h:i:s A');
 	$mysip->patron		= isset($result['variable']['CY']) ? implode($result['variable']['CY']) : '';
+	$mediaName		= isset($result['variable']['XF']) ? implode($result['variable']['XF']) : '';
 //var_dump($mysip->patron);
 // IF DESTINATION BRANCH IS NOT A SCHOOL OR THERE IS NO PATRON ON HOLD, PRINT TRANSIT SLIP
 	if (preg_match('/^\D/', $destinationBranch) === 1 || $mysip->patron == '') {
@@ -161,11 +182,13 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 			$receipt .= "<div id='destinationBranch'>MNPS</div>"; 
 			$receipt .= "<div id='destinationBranchName'>$destinationBranchName</div>";
 		} else {
-			$receipt .= "<div id='destinationBranch>$destinationBranch</div>"; 
+			$receipt .= "<div id='destinationBranch'>$destinationBranch</div>"; 
 		}
 		$receipt .= "<div id='item'>ITEM NUMBER: $item</div>"; 
 		$receipt .= "<div id='title'>TITLE: $title</div>"; 
-		$receipt .= "<div id='circNote'>MNPS LIBRARIAN: Check in this item and shelve it.</div>";
+		if (preg_match('/^\d/', $destinationBranch) === 1) {
+			$receipt .= "<div id='circNote'>MNPS LIBRARIAN: Check in this item and shelve it.</div>";
+		}
 		$receipt .= "<div id='checkinDateTime'>$checkinDateTime</div>"; 
 		$receipt .= "</div>";
 		$receipt .= "</div>";
@@ -174,6 +197,9 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 
 // IF DESTINATION BRANCH IS A SCHOOL AND THERE IS A PATRON ON HOLD, CHECK OUT ITEM AND PRINT DUE SLIP
 //	if (preg_match('/^\d/', $destinationBranch) === 1 && !empty($mysip->patron)) {
+
+/*
+// SIP2 CHECKOUT
 	$in 			= '';
 	$in 			= $mysip->msgCheckout($item,$nbduedate,'N','','N','Y','N'); // no block = 'Y'
 //	$in 			= $mysip->msgCheckout($item,1546300801,'N','','N','Y','N'); // no block = 'Y'
@@ -192,6 +218,48 @@ function checkout($item,$nbduedate = '',$customNotes = '') {
 		return $receipt;
 	}
 	$dueDate		= isset($result['variable']['AH']) ? date_format(date_create_from_format('mdy', implode($result['variable']['AH'])), 'F d, Y') : '';
+*/
+
+// CIRCULATION API CHECKOUT
+	global $circulationApiLogin;
+	global $circulationApiPassword;
+	global $circulationApiWsdl;
+	global $circulationApiDebugMode;
+	global $circulationApiReportMode;
+	$requestName					= 'CheckoutItem';
+	$tag						= $mysip->patron . ' : ' . $requestName;
+	$requestCheckoutItem				= new stdClass();
+	$requestCheckoutItem->Modifiers			= new stdClass();
+	$requestCheckoutItem->Modifiers->DebugMode	= $circulationApiDebugMode;
+	$requestCheckoutItem->Modifiers->ReportMode	= $circulationApiReportMode;
+	$requestCheckoutItem->Modifiers->EnvBranch	= 'LL'; // Checkout terminal = Limitless Libraries
+	$requestCheckoutItem->PatronSearchType		= 'Patron ID';
+	$requestCheckoutItem->PatronSearchID		= $mysip->patron; // Patron ID
+	$requestCheckoutItem->ItemID			= $item; // Item Barcode
+	$requestCheckoutItem->Alias			= $alias; // Staffer alias
+// DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 7-DAY MOVIE MEDIA
+	if (!empty($mediaName) && preg_match('/^(dvd|dvd, r-rated|blu-ray, circ 1-week|blu-ray, r-rated, circ 1-week)$/', $mediaName) === 1 && !empty($nbduedate07)) {
+		$requestCheckoutItem->DueDate	= $nbduedate07;
+	}
+	$resultCheckoutItem				= '';
+//	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag, $circulationApiLogin, $circulationApiPassword);
+	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
+// IF CIRCULATION API CHECKOUT ERROR, ABORT
+	if (isset($resultCheckoutItem->error)) {
+		$receipt	= "<div id='print' class='error'>";
+		$receipt	.= "<div id='message'>" . $resultCheckoutItem->error . "</div>";
+		$receipt	.= "<div id='checkinDateTime' data-checkinDateTime=$checkinDateTime>$checkinDateTime</div>"; 
+		$receipt	.= "</div>";
+		$receipt	.= "</div>";
+		return $receipt;
+	}
+// DUE DATE
+//	$dueDate	= date_create_from_format('Y-m-d-H:i', $resultCheckoutItem->response->DueDate);
+//	$checkoutDate	= date_create();
+//	$loanPeriod	= date_diff($dueDate, $checkoutDate);
+//var_dump($loanPeriod->format('%R%a days'));
+	$dueDate	= isset($resultCheckoutItem->response->DueDate) ? date_format(date_create_from_format('Y-m-d-H:i', $resultCheckoutItem->response->DueDate), 'F d, Y') : '';
+
 // ADDITIONAL PATRON INFORMATION VIA SOAP
 	global $patronApiWsdl;
 	global $patronApiDebugMode;

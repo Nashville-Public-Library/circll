@@ -54,16 +54,31 @@ form div.row {
 	display: table-row;
 }
 
-input, form div label {
+form div label {
 	display: table-cell;
-	text-align: left;
+	text-align: right;
+	vertical-align: top;
 }
 
 input {
 	-moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
+	display: table-cell;
+	text-align: left;
+	vertical-align: middle;
 	width: 15em;
+}
+
+textarea {
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	display: table-cell;
+	margin: 5px;
+	text-align: left;
+	vertical-align: middle;
+	width: 12em;
 }
 
 input#submit {
@@ -175,7 +190,6 @@ div.dueSlip div#item {
 }
 
 div.dueSlip div#limitless {
-	font-family: 'Arial Black',sans-serif;
 	font-size: 6.5mm;
 	text-align: center;
 	margin: 0;
@@ -211,7 +225,6 @@ div.dueSlip dl dd {
 	margin: 0;
 	padding: 0;
 	width: 48mm;
-	font-family: 'Arial Black',sans-serif;
 	text-transform: uppercase;
 }
 
