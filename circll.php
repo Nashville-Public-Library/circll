@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row"><label for="alias">Staff initials: </label><input type="text" id="alias" name="alias" value="<?php if(isset($alias)){echo $alias;} ?>"></div>
 <!--    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div> -->
     <div class="row">
-        <label for="nbduedate07">7-day DVD due date: </label>
+        <label for="nbduedate07">7-day DVD due: </label>
 	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(isset($nbduedate07)){echo $nbduedate07;} ?>">
     </div>
 <!--
@@ -99,14 +99,20 @@ function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password
 			if (!empty($result->response)) {
 				if (gettype($result->response) == 'object') {
 					$ShortMessage[0] = $result->response->ResponseStatuses->ResponseStatus->ShortMessage;
-					$result->success = $ShortMessage[0] == 'Successful operation';
+					if ($ShortMessage[0] == 'Successful operation') {
+						$result->success = $ShortMessage[0];
+					} else {
+						$result->error = "ERROR: " . $tag . " : " . $ShortMessage[0];
+					}
 				} else if (gettype($result->response) == 'string') {
 					$result->success = stripos($result->response, '<ns2:ShortMessage>Successful operation</ns2:ShortMessage>') !== false;
 					preg_match('/<ns2:LongMessage>(.+?)<\/ns2:LongMessage>/', $result->response, $longMessages);
 					preg_match('/<ns2:ShortMessage>(.+?)<\/ns2:ShortMessage>/', $result->response, $shortMessages);
-				}
-				if(!$result->success) {
-					$result->error = "ERROR: " . $tag . " : " . (isset($longMessages[1]) ? ' : ' . $longMessages[1] : (isset($shortMessages[0]) ? ' : ' . $shortMessages[0] : ''));
+					if (!empty($shortMessages)) {
+ 						$result->error  .= implode($shortMessages);
+					} elseif (!empty($longMessages)) {
+						$result->error  .= implode($longMessages);
+					}
 				}
 			} else {
 				$result->error = "ERROR: " . $tag . " : No SOAP response from API.";
@@ -117,7 +123,9 @@ function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password
 		$numTries++;
 	}
 	if (isset($result->error)) {
-		echo "$result->error\n";
+//		echo '<h1>result->error</h1>';
+//		var_dump($result->error);
+//		echo "\n\n";
 	} else {
 //		echo "SUCCESS: " . $tag . "\n";
 	}
@@ -227,7 +235,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	global $circulationApiDebugMode;
 	global $circulationApiReportMode;
 	$requestName					= 'CheckoutItem';
-	$tag						= $mysip->patron . ' : ' . $requestName;
+	$tag						= $requestName . ' ' . $item . ' to ' . $mysip->patron;
 	$requestCheckoutItem				= new stdClass();
 	$requestCheckoutItem->Modifiers			= new stdClass();
 	$requestCheckoutItem->Modifiers->DebugMode	= $circulationApiDebugMode;
