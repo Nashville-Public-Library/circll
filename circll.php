@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(isset($nbduedate42)){echo $nbduedate42;} ?>">
     </div>
 -->
-    <div class="row"><label for="customNotes">Custom Notes: </label><textarea form="circll" id="customNotes" name="customNotes" maxlength="150" rows="4" cols="20" value="<?php if(isset($customNotes)){echo $customNotes;} ?>"></textarea></div>
+    <div class="row"><label for="customNotes">Custom Notes: </label><textarea id="customNotes" name="customNotes" form="circll" maxlength="150" rows="4"><?php if(isset($customNotes)){echo $customNotes;} ?></textarea></div>
     <div class="row"><label for="submit"> </label><input type="submit" id="submit" name="submit" value="Submit"></div>
   </form>
   <footer id="formFooter">Have a Nice Day</footer>
