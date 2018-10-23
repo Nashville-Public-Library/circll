@@ -8,7 +8,7 @@
 function printReceipt () {
 	var oPrintDiv = document.getElementById("print");
 	oPrintDiv.style.visibility = "visible";
-	window.print();
+//	window.print();
 //	oPrintDiv.style.visibility = "hidden";
 };
 </script>
@@ -376,12 +376,12 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		$receipt 	.= "<div id='item'>$itemLastFour</div>"; 
 		$receipt 	.= '<div id="limitless">Limitless Libraries</div>';
 		$receipt	.= "<dl>";
-		$receipt 	.= "<dt>School</dt><dd>$branchName</dd>"; 
+		$receipt 	.= "<dt>School</dt><dd class='emboldened'>$branchName</dd>"; 
 		if ($borrowerClass == 'Student') {
 			$receipt	.= "<dt>Grade $borrowerGrade</dt><dd>$sponsorName</dd>"; 
 		}
 		$receipt 	.= "<dt>$borrowerClass</dt><dd>$patronName</dd>"; 
-		$receipt 	.= "<dt>Due</dt><dd>$dueDate</dd>"; 
+		$receipt 	.= "<dt>Due</dt><dd class='emboldened'>$dueDate</dd>"; 
 		$receipt	.= "</dl>";
 		$receipt 	.= '<div id="footer"><p>Students and Educators: Return to your school library or any NPL location</p><p>School Librarians: Return to NPL</p><p>NPL Staff: Remove label and check in</p></div>';
 		if (!empty($customNotes)) {

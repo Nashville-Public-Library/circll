@@ -214,6 +214,7 @@ div.dueSlip dl dt {
 	float: left;
 	margin: 0;
 	padding: 0;
+	padding-bottom: 2mm;
 	width: 20mm;
 }
 
@@ -224,8 +225,14 @@ div.dueSlip dl dd {
 	float: left;
 	margin: 0;
 	padding: 0;
+	padding-bottom: 2mm;
 	width: 48mm;
 	text-transform: uppercase;
+}
+
+div.dueSlip dl dd.emboldened {
+	font-weight: bold;
+	text-transform: capitalize;
 }
 
 div.dueSlip div#footer {
