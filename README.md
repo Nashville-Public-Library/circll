@@ -1,6 +1,6 @@
 # circll
 Circulation client for Nashville Public Library / Limitless Libraries circulation staff using SIP2 and CarlXAPIs
-## The following documention outlines print configuration settings for the Firefox browser while using the CIRCLL Web Client.
+**The following documention outlines print configuration settings for the Firefox browser while using the CIRCLL Web Client**
 
 **1. To set automatic printing:**
   * Type **about:config** into the address bar.
