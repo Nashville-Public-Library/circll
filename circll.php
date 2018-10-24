@@ -8,7 +8,7 @@
 function printReceipt () {
 	var oPrintDiv = document.getElementById("print");
 	oPrintDiv.style.visibility = "visible";
-//	window.print();
+	window.print();
 //	oPrintDiv.style.visibility = "hidden";
 };
 </script>
@@ -18,7 +18,7 @@ function printReceipt () {
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$item = htmlspecialchars(stripslashes(trim($_POST["item"])));
+	$item = strtoupper(htmlspecialchars(stripslashes(trim($_POST["item"]))));
 	$alias = htmlspecialchars(stripslashes(trim($_POST["alias"])));
 	$nbduedate07 = htmlspecialchars(stripslashes(trim($_POST["nbduedate07"])));
 	$nbduedate21 = htmlspecialchars(stripslashes(trim($_POST["nbduedate21"])));
