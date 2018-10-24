@@ -23,9 +23,9 @@ Circulation client for Nashville Public Library / Limitless Libraries circulatio
   * Double-click the highlighted line to set value to **true**
   * Restart Firefox.
 
-4. Navigate the Firefox browser to: https://galacto.library.nashville.org/circll.php
+**4.** Navigate the Firefox browser to: https://galacto.library.nashville.org/circll.php
 
-5. Scanning the item barcode should create an automatic receipt from the re-stick printer.
+**5.** Scanning the item barcode should create an automatic receipt from the re-stick printer.
 
 if this is not the case:
 
