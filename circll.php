@@ -62,19 +62,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php
 
 if (empty($patronApiWsdl)) {
+// TO DO: when php updated beyond 5.5 to 5.6.1 or later, boolean recasting is not necessary given parse_ini_file scanner mode INI_SCANNER_TYPED
 		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_RAW);
 		$circulationApiLogin		= $configArray['Catalog']['circulationApiLogin'];
 		$circulationApiPassword		= $configArray['Catalog']['circulationApiPassword'];
 		$circulationApiWsdl		= $configArray['Catalog']['circulationApiWsdl'];
-		$circulationApiDebugMode	= $configArray['Catalog']['circulationApiDebugMode'];
-		$circulationApiReportMode	= $configArray['Catalog']['circulationApiReportMode'];
+		$circulationApiDebugMode	= (boolean) $configArray['Catalog']['circulationApiDebugMode'];
+		$circulationApiReportMode	= (boolean) $configArray['Catalog']['circulationApiReportMode'];
 		$patronApiWsdl			= $configArray['Catalog']['patronApiWsdl'];
-		$patronApiDebugMode		= $configArray['Catalog']['patronApiDebugMode'];
-		$patronApiReportMode		= $configArray['Catalog']['patronApiReportMode'];
+		$patronApiDebugMode		= (boolean) $configArray['Catalog']['patronApiDebugMode'];
+		$patronApiReportMode		= (boolean) $configArray['Catalog']['patronApiReportMode'];
 		$catalogApiWsdl			= $configArray['Catalog']['catalogApiWsdl'];
-		$catalogApiDebugMode		= $configArray['Catalog']['catalogApiDebugMode'];
-		$catalogApiReportMode		= $configArray['Catalog']['catalogApiReportMode'];
+		$catalogApiDebugMode		= (boolean) $configArray['Catalog']['catalogApiDebugMode'];
+		$catalogApiReportMode		= (boolean) $configArray['Catalog']['catalogApiReportMode'];
 }
+
+var_dump($circulationApiReportMode);
 
 initMemcache();
 $receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
@@ -94,6 +97,7 @@ function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password
 		try {
 			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1, 'login' => $login, 'password' => $password));
 			$result->response = $client->$requestName($request);
+var_dump($client->__getLastRequest());
 			$connectionPassed = true;
 			if (is_null($result->response)) {$result->response = $client->__getLastResponse();}
 			if (!empty($result->response)) {
@@ -252,6 +256,10 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$resultCheckoutItem				= '';
 //	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag, $circulationApiLogin, $circulationApiPassword);
 	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
+//var_dump($circulationApiWsdl);
+//var_dump($requestCheckoutItem);
+//var_dump($resultCheckoutItem);
+
 // IF CIRCULATION API CHECKOUT ERROR, ABORT
 	if (isset($resultCheckoutItem->error)) {
 		$receipt	= "<div id='print' class='error'>";
