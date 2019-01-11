@@ -77,8 +77,6 @@ if (empty($patronApiWsdl)) {
 		$catalogApiReportMode		= (boolean) $configArray['Catalog']['catalogApiReportMode'];
 }
 
-var_dump($circulationApiReportMode);
-
 initMemcache();
 $receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
 $css = file_get_contents('./circll.css');
@@ -88,7 +86,7 @@ echo $receipt;
 
 //////////////////// FUNCTIONS ////////////////////
 
-function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password = 'diploidmumboruin8') {
+function callAPI($wsdl, $requestName, $request, $tag, $login = '', $password = '') {
 	$connectionPassed = false;
 	$numTries = 0;
 	$result = new stdClass();
@@ -97,7 +95,6 @@ function callAPI($wsdl, $requestName, $request, $tag, $login = 'mnpl', $password
 		try {
 			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1, 'login' => $login, 'password' => $password));
 			$result->response = $client->$requestName($request);
-var_dump($client->__getLastRequest());
 			$connectionPassed = true;
 			if (is_null($result->response)) {$result->response = $client->__getLastResponse();}
 			if (!empty($result->response)) {
@@ -128,7 +125,7 @@ var_dump($client->__getLastRequest());
 	}
 	if (isset($result->error)) {
 //		echo '<h1>result->error</h1>';
-//		var_dump($result->error);
+		var_dump($result->error);
 //		echo "\n\n";
 	} else {
 //		echo "SUCCESS: " . $tag . "\n";
@@ -254,8 +251,8 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		$requestCheckoutItem->DueDate	= $nbduedate07;
 	}
 	$resultCheckoutItem				= '';
-//	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag, $circulationApiLogin, $circulationApiPassword);
-	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
+	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag, $circulationApiLogin, $circulationApiPassword);
+//	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
 //var_dump($circulationApiWsdl);
 //var_dump($requestCheckoutItem);
 //var_dump($resultCheckoutItem);
@@ -277,6 +274,8 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$dueDate	= isset($resultCheckoutItem->response->DueDate) ? date_format(date_create_from_format('Y-m-d-H:i', $resultCheckoutItem->response->DueDate), 'F d, Y') : '';
 
 // ADDITIONAL PATRON INFORMATION VIA SOAP
+	global $circulationApiLogin;
+	global $circulationApiPassword;
 	global $patronApiWsdl;
 	global $patronApiDebugMode;
 	global $patronApiReportMode;
@@ -293,7 +292,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$requestPatron->SearchID		= $mysip->patron; // Patron ID
 	$requestPatron->Patron			= new stdClass();
 	$resultPatron 				= '';
-	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag);
+	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag, $circulationApiLogin, $circulationApiPassword);
 //var_dump($resultPatron);
 	if($resultPatron->response->ResponseStatuses->ResponseStatus->ShortMessage == 'Successful operation') {
 		$borrowerTypeCode		= (int) $resultPatron->response->Patron->PatronType;
