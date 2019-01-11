@@ -86,14 +86,16 @@ echo $receipt;
 
 //////////////////// FUNCTIONS ////////////////////
 
-function callAPI($wsdl, $requestName, $request, $tag, $login = '', $password = '') {
+function callAPI($wsdl, $requestName, $request, $tag) {
+	global $circulationApiLogin;
+	global $circulationApiPassword;
 	$connectionPassed = false;
 	$numTries = 0;
 	$result = new stdClass();
 	$result->response = "";
 	while (!$connectionPassed && $numTries < 3) {
 		try {
-			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1, 'login' => $login, 'password' => $password));
+			$client = new SOAPClient($wsdl, array('connection_timeout' => 3, 'features' => SOAP_WAIT_ONE_WAY_CALLS, 'trace' => 1, 'login' => $circulationApiLogin, 'password' => $circulationApiPassword));
 			$result->response = $client->$requestName($request);
 			$connectionPassed = true;
 			if (is_null($result->response)) {$result->response = $client->__getLastResponse();}
@@ -125,7 +127,7 @@ function callAPI($wsdl, $requestName, $request, $tag, $login = '', $password = '
 	}
 	if (isset($result->error)) {
 //		echo '<h1>result->error</h1>';
-		var_dump($result->error);
+//		var_dump($result->error);
 //		echo "\n\n";
 	} else {
 //		echo "SUCCESS: " . $tag . "\n";
@@ -251,11 +253,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		$requestCheckoutItem->DueDate	= $nbduedate07;
 	}
 	$resultCheckoutItem				= '';
-	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag, $circulationApiLogin, $circulationApiPassword);
-//	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
-//var_dump($circulationApiWsdl);
-//var_dump($requestCheckoutItem);
-//var_dump($resultCheckoutItem);
+	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
 
 // IF CIRCULATION API CHECKOUT ERROR, ABORT
 	if (isset($resultCheckoutItem->error)) {
@@ -292,7 +290,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$requestPatron->SearchID		= $mysip->patron; // Patron ID
 	$requestPatron->Patron			= new stdClass();
 	$resultPatron 				= '';
-	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag, $circulationApiLogin, $circulationApiPassword);
+	$resultPatron				= callAPI($patronApiWsdl, $requestName, $requestPatron, $tag);
 //var_dump($resultPatron);
 	if($resultPatron->response->ResponseStatuses->ResponseStatus->ShortMessage == 'Successful operation') {
 		$borrowerTypeCode		= (int) $resultPatron->response->Patron->PatronType;
