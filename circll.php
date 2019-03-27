@@ -344,6 +344,10 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 					$borrowerClass	= 'Student';
 					$borrowerGrade	= $borrowerTypeCode - 22;
 					break;
+				case $borrowerTypeCode==46:
+					$borrowerClass	= 'Student';
+					$borrowerGrade	= 'H';
+					break;
 				case $borrowerTypeCode==40:
 					$borrowerClass	= 'MNPS Librarian';
 					$borrowerGrade	= '';
@@ -363,6 +367,11 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 					$branchName	= 'NON-DELIVERY';
 					break;
 				case $borrowerTypeCode==37:
+					$borrowerClass	= 'Student';
+					$borrowerGrade	= 'H';
+					$branchName	= 'NON-DELIVERY';
+					break;
+				case $borrowerTypeCode==47:
 					$borrowerClass	= 'Student';
 					$borrowerGrade	= 'H';
 					$branchName	= 'NON-DELIVERY';
