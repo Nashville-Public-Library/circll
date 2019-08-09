@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!--    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div> -->
     <div class="row">
         <label for="nbduedate07">7-day DVD due: </label>
-	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(isset($nbduedate07)){echo $nbduedate07;} ?>">
+	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(isset($nbduedate07)){echo $nbduedate07;} ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime(' + 2 months')); ?>" >
     </div>
 <!--
     <div class="row">
