@@ -182,12 +182,12 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 				$requestBranch->BranchSearchType	= 'Branch Code';
 				$requestBranch->BranchSearchValue	= $destinationBranch;
 				$requestBranch->Modifiers		= new stdClass();
-				$requestPatron->Modifiers->DebugMode	= $catalogApiDebugMode;
-				$requestPatron->Modifiers->ReportMode	= $catalogApiReportMode;
+				$requestBranch->Modifiers->DebugMode	= $catalogApiDebugMode;
+				$requestBranch->Modifiers->ReportMode	= $catalogApiReportMode;
 				$resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
 				if ($resultBranch && $resultBranch->response->BranchInfo) {
 					$destinationBranchName = $resultBranch->response->BranchInfo->BranchName;
-					$memcache->add('carlx_branchCode_' . $branchCode, $destinationBranchName, false, 86400);
+					$memcache->add('carlx_branchCode_' . $destinationBranch, $destinationBranchName, false, 86400);
 				}
 			}
 			$receipt .= "<div id='destinationBranch'>MNPS</div>"; 
