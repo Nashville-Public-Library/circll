@@ -77,7 +77,6 @@ if (empty($patronApiWsdl)) {
 		$catalogApiReportMode		= (boolean) $configArray['Catalog']['catalogApiReportMode'];
 }
 
-initMemcache();
 $receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
 $css = file_get_contents('./circll.css');
 $receipt = "<style>$css</style>" . $receipt;
@@ -136,7 +135,6 @@ function callAPI($wsdl, $requestName, $request, $tag) {
 }
 
 function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbduedate42 = '', $customNotes = '') {
-	global $memcache;
 	include('sip2.class.php');
 	date_default_timezone_set('America/Chicago');
 	$mysip				= new sip2;
@@ -170,27 +168,22 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 			$receipt .= "<div id='hold'> </div>";
 		}
 		if (preg_match('/^\d/', $destinationBranch) === 1) {
-			$destinationBranchName = $memcache->get('carlx_branchCode_' . $destinationBranch);
-			if (!empty($destinationBranchName) and isset($destinationBranchName)) {
-			} else {
-				global $catalogApiWsdl;
-				global $catalogApiDebugMode;
-				global $catalogApiReportMode;
-				$requestName				= 'getBranchInformation';
-				$tag					= $requestName;
-				$requestBranch				= new stdClass();
-				$requestBranch->BranchSearchType	= 'Branch Code';
-				$requestBranch->BranchSearchValue	= $destinationBranch;
-				$requestBranch->Modifiers		= new stdClass();
-				$requestBranch->Modifiers->DebugMode	= $catalogApiDebugMode;
-				$requestBranch->Modifiers->ReportMode	= $catalogApiReportMode;
-				$resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
-				if ($resultBranch && $resultBranch->response->BranchInfo) {
-					$destinationBranchName = $resultBranch->response->BranchInfo->BranchName;
-					$memcache->add('carlx_branchCode_' . $destinationBranch, $destinationBranchName, false, 86400);
-				}
-			}
-			$receipt .= "<div id='destinationBranch'>MNPS</div>"; 
+            global $catalogApiWsdl;
+            global $catalogApiDebugMode;
+            global $catalogApiReportMode;
+            $requestName				= 'getBranchInformation';
+            $tag					= $requestName;
+            $requestBranch				= new stdClass();
+            $requestBranch->BranchSearchType	= 'Branch Code';
+            $requestBranch->BranchSearchValue	= $destinationBranch;
+            $requestBranch->Modifiers		= new stdClass();
+            $requestBranch->Modifiers->DebugMode	= $catalogApiDebugMode;
+            $requestBranch->Modifiers->ReportMode	= $catalogApiReportMode;
+            $resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
+            if ($resultBranch && $resultBranch->response->BranchInfo) {
+                $destinationBranchName = $resultBranch->response->BranchInfo->BranchName;
+            }
+			$receipt .= "<div id='destinationBranch'>MNPS</div>";
 			$receipt .= "<div id='destinationBranchName'>$destinationBranchName</div>";
 		} else {
 			$receipt .= "<div id='destinationBranch'>$destinationBranch</div>"; 
@@ -308,21 +301,16 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		$patronName			= $patronNameLast . ', ' . $patronNameFirst . ' ' . $patronNameMiddle;
 		$branchCode			= $resultPatron->response->Patron->DefaultBranch;
 		if (!empty($branchCode)) {
-			$branchName = $memcache->get('carlx_branchCode_' . $branchCode);
-			if (!empty($branchName) and isset($branchName)) {
-			} else {
-				$requestName				= 'getBranchInformation';
-				$tag					= $requestName;
-				$requestBranch				= new stdClass();
-				$requestBranch->BranchSearchType	= 'Branch Code';
-				$requestBranch->BranchSearchValue	= $branchCode;
-				$requestBranch->Modifiers		= '';
-				$resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
-				if ($resultBranch && $resultBranch->response->BranchInfo) {
-					$branchName = $resultBranch->response->BranchInfo->BranchName;
-					$memcache->add('carlx_branchCode_' . $branchCode, $branchName, false, 86400);
-				}
-			}
+            $requestName				= 'getBranchInformation';
+            $tag					= $requestName;
+            $requestBranch				= new stdClass();
+            $requestBranch->BranchSearchType	= 'Branch Code';
+            $requestBranch->BranchSearchValue	= $branchCode;
+            $requestBranch->Modifiers		= '';
+            $resultBranch				= callAPI($catalogApiWsdl, $requestName, $requestBranch, $tag);
+            if ($resultBranch && $resultBranch->response->BranchInfo) {
+                $branchName = $resultBranch->response->BranchInfo->BranchName;
+            }
 		}
 		if (!empty($borrowerTypeCode)) {
 			$borrowerClass = '';
@@ -403,28 +391,6 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		}
 		$receipt 	.= '</div></div>';
 		return $receipt;
-	}
-}
-
-function initMemcache(){
-	//Connect to memcache
-	/** @var Memcache $memcache */
-	global $memcache;
-	global $configArray;
-	// Set defaults if nothing set in config file.
-//	$host = isset($configArray['Caching']['memcache_host']) ? $configArray['Caching']['memcache_host'] : 'localhost';
-//	$port = isset($configArray['Caching']['memcache_port']) ? $configArray['Caching']['memcache_port'] : 11211;
-//	$timeout = isset($configArray['Caching']['memcache_connection_timeout']) ? $configArray['Caching']['memcache_connection_timeout'] : 1;
-	$host = 'localhost';
-	$port = 11211;
-	$timeout = 1;
-	// Connect to Memcache:
-	$memcache = new Memcache;
-	if (!@$memcache->pconnect($host, $port, $timeout)) {
-		//Try again with a non-persistent connection
-		if (!$memcache->connect($host, $port, $timeout)) {
-			var_dump('\n\nmemcache did not connect!\n\n');
-		}
 	}
 }
 
