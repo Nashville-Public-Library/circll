@@ -62,19 +62,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php
 
 if (empty($patronApiWsdl)) {
-// TO DO: when php updated beyond 5.5 to 5.6.1 or later, boolean recasting is not necessary given parse_ini_file scanner mode INI_SCANNER_TYPED
-		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_RAW);
+		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_TYPED);
 		$circulationApiLogin		= $configArray['Catalog']['circulationApiLogin'];
 		$circulationApiPassword		= $configArray['Catalog']['circulationApiPassword'];
 		$circulationApiWsdl		= $configArray['Catalog']['circulationApiWsdl'];
-		$circulationApiDebugMode	= (boolean) $configArray['Catalog']['circulationApiDebugMode'];
-		$circulationApiReportMode	= (boolean) $configArray['Catalog']['circulationApiReportMode'];
+		$circulationApiDebugMode	= $configArray['Catalog']['circulationApiDebugMode'];
+		$circulationApiReportMode	= $configArray['Catalog']['circulationApiReportMode'];
 		$patronApiWsdl			= $configArray['Catalog']['patronApiWsdl'];
-		$patronApiDebugMode		= (boolean) $configArray['Catalog']['patronApiDebugMode'];
-		$patronApiReportMode		= (boolean) $configArray['Catalog']['patronApiReportMode'];
+		$patronApiDebugMode		= $configArray['Catalog']['patronApiDebugMode'];
+		$patronApiReportMode		= $configArray['Catalog']['patronApiReportMode'];
 		$catalogApiWsdl			= $configArray['Catalog']['catalogApiWsdl'];
-		$catalogApiDebugMode		= (boolean) $configArray['Catalog']['catalogApiDebugMode'];
-		$catalogApiReportMode		= (boolean) $configArray['Catalog']['catalogApiReportMode'];
+		$catalogApiDebugMode		= $configArray['Catalog']['catalogApiDebugMode'];
+		$catalogApiReportMode		= $configArray['Catalog']['catalogApiReportMode'];
 }
 
 $receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
