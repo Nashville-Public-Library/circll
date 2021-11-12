@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>circll</title>
 <link rel="stylesheet" type="text/css" href="./circll.css">
@@ -10,7 +10,7 @@ function printReceipt () {
 	oPrintDiv.style.visibility = "visible";
 	window.print();
 //	oPrintDiv.style.visibility = "hidden";
-};
+}
 </script>
 
 </head>
@@ -61,20 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <?php
 
-if (empty($patronApiWsdl)) {
-		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_TYPED);
-		$circulationApiLogin		= $configArray['Catalog']['circulationApiLogin'];
-		$circulationApiPassword		= $configArray['Catalog']['circulationApiPassword'];
-		$circulationApiWsdl		= $configArray['Catalog']['circulationApiWsdl'];
-		$circulationApiDebugMode	= $configArray['Catalog']['circulationApiDebugMode'];
-		$circulationApiReportMode	= $configArray['Catalog']['circulationApiReportMode'];
-		$patronApiWsdl			= $configArray['Catalog']['patronApiWsdl'];
-		$patronApiDebugMode		= $configArray['Catalog']['patronApiDebugMode'];
-		$patronApiReportMode		= $configArray['Catalog']['patronApiReportMode'];
-		$catalogApiWsdl			= $configArray['Catalog']['catalogApiWsdl'];
-		$catalogApiDebugMode		= $configArray['Catalog']['catalogApiDebugMode'];
-		$catalogApiReportMode		= $configArray['Catalog']['catalogApiReportMode'];
-}
+
+
 
 $receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
 $css = file_get_contents('./circll.css');
@@ -85,6 +73,7 @@ echo $receipt;
 //////////////////// FUNCTIONS ////////////////////
 
 function callAPI($wsdl, $requestName, $request, $tag) {
+    
 	global $circulationApiLogin;
 	global $circulationApiPassword;
 	$connectionPassed = false;

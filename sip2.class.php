@@ -62,7 +62,7 @@ class sip2
 {
 
     /* Public variables for configuration */
-	public $hostname	= '10.28.3.228';
+	public $hostname	= 'nashapp.library.nashville.org';
 	public $port		= '7400'; 
     public $library      = ''; 
     public $language     = '001'; /* 001= english */
