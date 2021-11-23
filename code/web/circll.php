@@ -18,15 +18,25 @@ function printReceipt () {
 <?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$item = strtoupper(htmlspecialchars(stripslashes(trim($_POST["item"]))));
-	$alias = htmlspecialchars(stripslashes(trim($_POST["alias"])));
-	$nbduedate07 = htmlspecialchars(stripslashes(trim($_POST["nbduedate07"])));
-	$nbduedate21 = htmlspecialchars(stripslashes(trim($_POST["nbduedate21"])));
-	$nbduedate42 = htmlspecialchars(stripslashes(trim($_POST["nbduedate42"])));
-	$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));
+	if (isset($_POST["item"])) {
+		$item = strtoupper(htmlspecialchars(stripslashes(trim($_POST["item"]))));
+	} else {
+		$item = '';
+	}
+	if (isset($_POST["alias"])) {$alias = htmlspecialchars(stripslashes(trim($_POST["alias"])));} else {$alias = '';}
+	if (isset($_POST["nbduedate07"])) {$nbduedate07 = htmlspecialchars(stripslashes(trim($_POST["nbduedate07"])));} else {$nbduedate07 = '';}
+	if (isset($_POST["nbduedate21"])) {$nbduedate21 = htmlspecialchars(stripslashes(trim($_POST["nbduedate21"])));} else {$nbduedate21 = '';}
+	if (isset($_POST["nbduedate42"])) {$nbduedate42 = htmlspecialchars(stripslashes(trim($_POST["nbduedate42"])));} else {$nbduedate42 = '';}
+	if (isset($_POST["customNotes"])) {$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));} else {$customNotes = '';}
 } else { // TESTING
 //	$item = '35192038783290';
 //	$nbduedate = strtotime('2019-01-31');
+	$item = '';
+	$alias = '';
+	$nbduedate07 = '';
+	$nbduedate21 = '';
+	$nbduedate42 = '';
+	$customNotes = '';
 }
 
 ?>
@@ -38,22 +48,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <form id="circll" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
     <div class="row"><label for="item">Item Barcode: </label><input type="text" id="item" name="item" autofocus></div>
     <div class="row"><label for="alias">Staff initials: </label><input type="text" id="alias" name="alias" value="<?php if(isset($alias)){echo $alias;} ?>"></div>
-<!--    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(isset($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div> -->
+<!--    <div class="row"><label for="nbduedate">NB Due Date: </label><input type="date" id="nbduedate" name="nbduedate" value="<?php if(!empty($nbduedate)){echo date('Y-m-d',$nbduedate);} ?>"></div> -->
     <div class="row">
         <label for="nbduedate07">7-day DVD due: </label>
-	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(isset($nbduedate07)){echo $nbduedate07;} ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime(' + 2 months')); ?>" >
+	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(!empty($nbduedate07)){echo $nbduedate07;} ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d', strtotime(' + 2 months')); ?>" >
     </div>
 <!--
     <div class="row">
         <label for="nbduedate21">21-day due date: </label>
-	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(isset($nbduedate21)){echo $nbduedate21;} ?>">
+	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(!empty($nbduedate21)){echo $nbduedate21;} ?>">
     </div>
     <div class="row">
         <label for="nbduedate42">42-day due date: </label>
-	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(isset($nbduedate42)){echo $nbduedate42;} ?>">
+	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(!empty($nbduedate42)){echo $nbduedate42;} ?>">
     </div>
 -->
-    <div class="row"><label for="customNotes">Custom Notes: </label><textarea id="customNotes" name="customNotes" form="circll" maxlength="150" rows="4"><?php if(isset($customNotes)){echo $customNotes;} ?></textarea></div>
+    <div class="row"><label for="customNotes">Custom Notes: </label><textarea id="customNotes" name="customNotes" form="circll" maxlength="150" rows="4"><?php if(!empty($customNotes)){echo $customNotes;} ?></textarea></div>
     <div class="row"><label for="submit"> </label><input type="submit" id="submit" name="submit" value="Submit"></div>
   </form>
   <footer id="formFooter">Have a Nice Day</footer>
@@ -62,7 +72,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php
 
 if (empty($patronApiWsdl)) {
-		$configArray			= parse_ini_file('config.pwd.ini', true, INI_SCANNER_TYPED);
+	//Read default configuration file
+	//$configFile = ROOT_DIR . '/../../sites/default/conf/config.ini';
+	//$mainArray = parse_ini_file($configFile, true);
+
+	global $fullServerName, $serverName, $instanceName;
+
+	if (isset($_SERVER['circll_server'])) {
+		//Override within the config file
+		$fullServerName = $_SERVER['circll_server'];
+		//echo("Server name is set as server var $fullServerName\r\n");
+	} else {
+	    die('No server name could be found to load configuration');
+	}
+
+    $configArray			= parse_ini_file('../../sites/' . $fullServerName . '/config.pwd.ini', true, INI_SCANNER_TYPED);
 		$circulationApiLogin		= $configArray['Catalog']['circulationApiLogin'];
 		$circulationApiPassword		= $configArray['Catalog']['circulationApiPassword'];
 		$circulationApiWsdl		= $configArray['Catalog']['circulationApiWsdl'];
