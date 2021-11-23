@@ -1,12 +1,12 @@
 <VirtualHost *:80>
     ServerName circll.library.nashville.org
     ServerAlias circll.library.nashville.org
-    DocumentRoot "/var/www/html"
+    DocumentRoot "/var/www/html/code/web/"
     CustomLog /var/log/circll/circll.library.nashville.org/access.log combined
     ErrorLog /var/log/circll/circll.library.nashville.org/error.log
     ErrorDocument 404 /Error/Handle404
     
-    <Directory "/var/www/html">
+    <Directory "/var/www/html/code/web">
       Require all granted
       Options -Indexes -MultiViews
       AllowOverride All
