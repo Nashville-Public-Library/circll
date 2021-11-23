@@ -1,5 +1,5 @@
 
-config.pwd.ini
+**/config.pwd.ini
 .idea/circll.iml
 .idea/codeStyles/codeStyleConfig.xml
 .idea/deployment.xml

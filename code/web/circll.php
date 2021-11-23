@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>circll</title>
-<link rel="stylesheet" type="text/css" href="./circll.css">
+<link rel="stylesheet" type="text/css" href="circll.css">
 
 <script type="text/javascript">
 function printReceipt () {
