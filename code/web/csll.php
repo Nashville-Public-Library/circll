@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
 <div id="screen">
-  <header id="formHeader">Limitless Libraries</header>
+  <header id="formHeader">CS Lending Library</header>
   <form id="circll" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
     <div class="row"><label for="item">Item Barcode: </label><input type="text" id="item" name="item" autofocus></div>
     <div class="row"><label for="alias">Staff initials: </label><input type="text" id="alias" name="alias" value="<?php if(isset($alias)){echo $alias;} ?>"></div>
