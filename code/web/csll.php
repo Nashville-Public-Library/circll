@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$item = '';
 	$alias = '';
 }
-	$nbduedate = new DateTime('2024-05-11');
+	//$nbduedate = new DateTime('2023-05-11');
 	$today = new DateTime('today');
 	$maxduedate = new DateTime('today');
 	$maxduedate = $maxduedate->add(new DateInterval("P2M"));
@@ -38,6 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$nbduedate42 = $nbduedate42->add(new DateInterval("P42D"));
 	$nbduedate42 = min($nbduedate, $nbduedate42);
 	$customNotes = '';
+// DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 42-DAY-CHECKOUT, here and below
+	$nbduedate = $nbduedate42;
+
 ?>
 
 <body>
@@ -240,7 +243,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$requestCheckoutItem->PatronSearchID		= $mysip->patron; // Patron ID
 	$requestCheckoutItem->ItemID			= $item; // Item Barcode
 	$requestCheckoutItem->Alias			= $alias; // Staffer alias
-// DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 42-DAY-CHECKOUT
+// DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 42-DAY-CHECKOUT, here and above
 	$requestCheckoutItem->DueDate	= date_format($nbduedate42, 'Y-m-d');
 //var_dump($requestCheckoutItem);
 	$resultCheckoutItem				= callAPI($circulationApiWsdl, $requestName, $requestCheckoutItem, $tag);
