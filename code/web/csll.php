@@ -373,10 +373,10 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 		}
 		$sponsorName	= $resultPatron->response->Patron->SponsorName;
 		$receipt 	= '<div id="print"><div id="receipt" class="dueSlip">';
-		$receipt 	.= '<div id="header">Only to be removed by NPL</div>';
+		$receipt 	.= '<div id="header">Return to Martin Center</div>';
 		$itemLastFour	= substr($item,-4);
 		$receipt 	.= "<div id='item'>$itemLastFour</div>"; 
-		$receipt 	.= '<div id="limitless">Limitless Libraries</div>';
+		$receipt 	.= '<div id="limitless">CS Lending Library</div>';
 		$receipt	.= "<dl>";
 		$receipt 	.= "<dt>School</dt><dd class='emboldened'>$branchName</dd>"; 
 		if ($borrowerClass == 'Student') {
