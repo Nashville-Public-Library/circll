@@ -30,8 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$item = '';
 	$alias = '';
 }
-	//$nbduedate = new DateTime('2023-05-11');
 	$today = new DateTime('today');
+	$nbduedate = new DateTime('today');
+	$nbduedate = $nbduedate->add(new DateInterval("P42D"));
 	$maxduedate = new DateTime('today');
 	$maxduedate = $maxduedate->add(new DateInterval("P2M"));
 	$nbduedate42 = new DateTime('today');
