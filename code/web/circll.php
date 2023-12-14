@@ -34,19 +34,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$item = '';
 	$alias = '';
 }
-	$nbduedate = new DateTime('2023-05-11');
 	$today = new DateTime('today');
+	$nbduedate = new DateTime('today');
+	$nbduedate = $nbduedate->add(new DateInterval("P42D"));
 	$maxduedate = new DateTime('today');
 	$maxduedate = $maxduedate->add(new DateInterval("P2M")); 
+	$minduedate = new DateTime('January 8, 2024'); // for setting a minimum due date for, e.g., winter break
 	$nbduedate07 = new DateTime('today');
 	$nbduedate07 = $nbduedate07->add(new DateInterval("P9D")); // default for 7 day loans should be 9 days for delivery buffer
 	$nbduedate07 = min($nbduedate, $nbduedate07);
+	$nbduedate07 = max($nbduedate07, $minduedate);
 	$nbduedate21 = new DateTime('today');
 	$nbduedate21 = $nbduedate21->add(new DateInterval("P21D"));
 	$nbduedate21 = min($nbduedate, $nbduedate21);
+	$nbduedate21 = max($nbduedate21, $minduedate);
 	$nbduedate42 = new DateTime('today');
 	$nbduedate42 = $nbduedate42->add(new DateInterval("P42D"));
 	$nbduedate42 = min($nbduedate, $nbduedate42);
+	$nbduedate42 = max($nbduedate42, $minduedate);
 //	$nbduedate21 = '';
 //	$nbduedate42 = '';
 	$customNotes = '';
