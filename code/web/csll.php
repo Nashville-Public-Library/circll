@@ -70,7 +70,9 @@ if (empty($patronApiWsdl)) {
 		$fullServerName = $_SERVER['circll_server'];
 		//echo("Server name is set as server var $fullServerName\r\n");
 	} else {
-	    die('No server name could be found to load configuration');
+		$fullServerName = 'circll.library.nashville.org';
+		//echo("Server name is set as hostname $fullServerName\r\n");
+//	    die('No server name could be found to load configuration');
 	}
 
     $configArray			= parse_ini_file('../../sites/' . $fullServerName . '/config.pwd.ini', true, INI_SCANNER_TYPED);
