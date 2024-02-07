@@ -342,7 +342,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 //var_dump($resultPatron);
 	if($resultPatron->response->ResponseStatuses->ResponseStatus->ShortMessage == 'Successful operation') {
 		$borrowerTypeCode		= (int) $resultPatron->response->Patron->PatronType;
-		if ($borrowerTypeCode == 35 || $borrowerTypeCode == 36 || $borrowerTypeCode == 37) {
+		if ($borrowerTypeCode == 35 || $borrowerTypeCode == 36 || $borrowerTypeCode == 37 || $borrowerTypeCode == 47) {
 			$receipt	= "<div id='print' class='error'>";
 			$receipt	.= "<div id='message'>NON-DELIVERY PATRON</div>";
 			$receipt	.= "<div id='checkinDateTime' data-checkinDateTime=$checkinDateTime>$checkinDateTime</div>"; 
