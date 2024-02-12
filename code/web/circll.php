@@ -49,12 +49,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$nbduedate07 = $nbduedate07->add(new DateInterval("P9D")); // default for 7 day loans should be 9 days for delivery buffer
 	$nbduedate07 = min($nbduedate, $nbduedate07);
 	$nbduedate07 = max($nbduedate07, $minduedate);
+// WEIRD HOLIDAY CALCULATIONS
+// 2024 SPRING BREAK
+	if ($today > new DateTime('2024-03-04') && $today < new DateTime('2024-03-18')) {
+		$nbduedate07 = new DateTime('2024-03-27');
+	} elseif ($nbduedate07 > new DateTime('2024-03-08') && $nbduedate07 < new DateTime('2024-03-18')) {
+		$nbduedate07 = new DateTime('2024-03-18');
+	}
 //	$nbduedate07 = new DateTime('2024-01-17'); // Explicitly set due date for 7-day loans
 
 	$nbduedate21 = new DateTime('today');
 	$nbduedate21 = $nbduedate21->add(new DateInterval("P21D"));
 	$nbduedate21 = min($nbduedate, $nbduedate21);
 	$nbduedate21 = max($nbduedate21, $minduedate);
+// WEIRD HOLIDAY CALCULATIONS
+// 2024 SPRING BREAK
+	if ($today > new DateTime('2024-03-04') && $today < new DateTime('2024-03-18')) {
+		$nbduedate21 = new DateTime('2024-04-08');
+	} elseif ($nbduedate21 > new DateTime('2024-03-08') && $nbduedate21 < new DateTime('2024-03-18')) {
+		$nbduedate21 = new DateTime('2024-03-18');
+	}
 //	$nbduedate21 = new DateTime('2024-01-29'); // Explicitly set due date for 21-day loans
 
 	$nbduedate42 = new DateTime('today');
