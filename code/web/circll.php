@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 //	} elseif ($nbduedate07 > new DateTime('2024-03-08') && $nbduedate07 < new DateTime('2024-03-18')) {
 //		$nbduedate07 = new DateTime('2024-03-18');
 //	}
-	$nbduedate07 = new DateTime('2024-05-13'); // Explicitly set due date for 7-day loans
+//	$nbduedate07 = new DateTime('2024-05-13'); // Explicitly set due date for 7-day loans
 
 	$nbduedate21 = new DateTime('today');
 	$nbduedate21 = $nbduedate21->add(new DateInterval("P21D"));
@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 //	} elseif ($nbduedate21 > new DateTime('2024-03-08') && $nbduedate21 < new DateTime('2024-03-18')) {
 //		$nbduedate21 = new DateTime('2024-03-18');
 //	}
-	$nbduedate21 = new DateTime('2024-05-13'); // Explicitly set due date for 21-day loans
+//	$nbduedate21 = new DateTime('2024-05-13'); // Explicitly set due date for 21-day loans
 
 	$nbduedate42 = new DateTime('today');
 	$nbduedate42 = $nbduedate42->add(new DateInterval("P42D"));
