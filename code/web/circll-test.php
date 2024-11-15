@@ -18,6 +18,7 @@ function printReceipt () {
 <?php
 
 // DEFINE MNPS CLOSED DATES
+// MNPS closed dates, 2024-2025 school year. Must include all Saturdays and Sundays.
 $mnpsClosedDates = [
     '11/2/2024',
 	'11/3/2024',
@@ -118,10 +119,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$item = '';
 	}
 	if (isset($_POST["alias"])) {$alias = htmlspecialchars(stripslashes(trim($_POST["alias"])));} else {$alias = '';}
-//	if (isset($_POST["nbduedate"])) {$nbduedate = htmlspecialchars(stripslashes(trim($_POST["nbduedate"])));} else {$nbduedate = '';}
-//	if (isset($_POST["nbduedate07"])) {$nbduedate07 = htmlspecialchars(stripslashes(trim($_POST["nbduedate07"])));} else {$nbduedate07 = '';}
-//	if (isset($_POST["nbduedate21"])) {$nbduedate21 = htmlspecialchars(stripslashes(trim($_POST["nbduedate21"])));} else {$nbduedate21 = '';}
-//	if (isset($_POST["nbduedate42"])) {$nbduedate42 = htmlspecialchars(stripslashes(trim($_POST["nbduedate42"])));} else {$nbduedate42 = '';}
+//	if (isset($_POST["duedate"])) {$duedate = htmlspecialchars(stripslashes(trim($_POST["duedate"])));} else {$duedate = '';}
+//	if (isset($_POST["duedate07"])) {$duedate07 = htmlspecialchars(stripslashes(trim($_POST["duedate07"])));} else {$duedate07 = '';}
+//	if (isset($_POST["duedate21"])) {$duedate21 = htmlspecialchars(stripslashes(trim($_POST["duedate21"])));} else {$duedate21 = '';}
+//	if (isset($_POST["duedate42"])) {$duedate42 = htmlspecialchars(stripslashes(trim($_POST["duedate42"])));} else {$duedate42 = '';}
 	if (isset($_POST["customNotes"])) {$customNotes = htmlspecialchars(stripslashes(trim($_POST["customNotes"])));} else {$customNotes = '';}
 } else { 
 // TESTING ITEM
@@ -129,6 +130,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$item = '';
 	$alias = '';
 }
+    $endOfYearDueDate = new DateTime('2024-05-12');
+    $today = new DateTime('today');
 
     $arrivesDate = new DateTime('today');
     $arrivesDate = $arrivesDate->add(new DateInterval("P3D"));
@@ -136,17 +139,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	$duedate07 = $arrivesDate->add(new DateInterval("P7D"));
     $duedate07 = findNextMNPSOpenDate($mnpsClosedDates, $duedate07);
+    $duedate07 = min($duedate07, $endOfYearDueDate);
 
-	$nbduedate21 = $arrivesDate->add(new DateInterval("P21D"));
-	$nbduedate21 = findNextMNPSOpenDate($mnpsClosedDates, $nbduedate21);
+	$duedate21 = $arrivesDate->add(new DateInterval("P21D"));
+	$duedate21 = findNextMNPSOpenDate($mnpsClosedDates, $duedate21);
+    $duedate21 = min($duedate21, $endOfYearDueDate);
 
-	$nbduedate42 = $arrivesDate->add(new DateInterval("P42D"));
-    $nbduedate42 = findNextMNPSOpenDate($mnpsClosedDates, $nbduedate42);
-//	$nbduedate42 = new DateTime('2024-02-20'); // Explicitly set due date for 42-day loans
+	$duedate42 = $arrivesDate->add(new DateInterval("P42D"));
+    $duedate42 = findNextMNPSOpenDate($mnpsClosedDates, $duedate42);
+    $duedate42 = min($duedate42, $endOfYearDueDate);
 
-	$customNotes = '';
-//}
-
+    $maxduedate = $duedate42;
 ?>
 
 <body>
@@ -157,20 +160,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row"><label for="item">Item Barcode: </label><input type="text" id="item" name="item" autofocus></div>
     <div class="row"><label for="alias">Staff initials: </label><input type="text" id="alias" name="alias" value="<?php if(isset($alias)){echo $alias;} ?>"></div>
     <div class="row">
-        <label for="nbduedate">NB Due Date: </label>
-        <input type="date" id="nbduedate" name="nbduedate" value="<?php if(!empty($nbduedate)){echo date_format($nbduedate, 'Y-m-d');} ?>" readonly >
+        <label for="duedate07">7-day DVD due: </label>
+	<input type="date" id="duedate07" name="duedate07" value="<?php if(!empty($duedate07)){echo date_format($duedate07, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" >
     </div>
     <div class="row">
-        <label for="nbduedate07">7-day DVD due: </label>
-	<input type="date" id="nbduedate07" name="nbduedate07" value="<?php if(!empty($nbduedate07)){echo date_format($nbduedate07, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" >
+        <label for="duedate21">21-day due date: </label>
+	<input type="date" id="duedate21" name="duedate21" value="<?php if(!empty($duedate21)){echo date_format($duedate21, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" readonly >
     </div>
     <div class="row">
-        <label for="nbduedate21">21-day due date: </label>
-	<input type="date" id="nbduedate21" name="nbduedate21" value="<?php if(!empty($nbduedate21)){echo date_format($nbduedate21, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" readonly >
-    </div>
-    <div class="row">
-        <label for="nbduedate42">42-day due date: </label>
-	<input type="date" id="nbduedate42" name="nbduedate42" value="<?php if(!empty($nbduedate42)){echo date_format($nbduedate42, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" readonly >
+        <label for="duedate42">42-day due date: </label>
+	<input type="date" id="duedate42" name="duedate42" value="<?php if(!empty($duedate42)){echo date_format($duedate42, 'Y-m-d');} ?>" min="<?php echo date_format($today, 'Y-m-d'); ?>" max="<?php echo date_format($maxduedate, 'Y-m-d'); ?>" readonly >
     </div>
     <div class="row"><label for="customNotes">Custom Notes: </label><textarea id="customNotes" name="customNotes" form="circll" maxlength="150" rows="4"><?php if(!empty($customNotes)){echo $customNotes;} ?></textarea></div>
     <div class="row"><label for="submit"> </label><input type="submit" id="submit" name="submit" value="Submit"></div>
@@ -209,7 +208,7 @@ if (empty($patronApiWsdl)) {
 		$catalogApiReportMode		= $configArray['Catalog']['catalogApiReportMode'];
 }
 
-$receipt = checkout($item,$alias,$nbduedate07,$nbduedate21,$nbduedate42,$customNotes);
+$receipt = checkout($item,$alias,$duedate07,$duedate21,$duedate42,$customNotes);
 $css = file_get_contents('./circll.css');
 $receipt = "<style>$css</style>" . $receipt;
 $receipt .= '<script>(function(){printReceipt();})();</script>';
@@ -266,7 +265,7 @@ function callAPI($wsdl, $requestName, $request, $tag) {
 	return $result;
 }
 
-function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbduedate42 = '', $customNotes = '') {
+function checkout($item, $alias = '', $duedate07 = '', $duedate21 = '', $duedate42 = '', $customNotes = '') {
 	include('sip2.class.php');
 	date_default_timezone_set('America/Chicago');
 	$mysip				= new sip2;
@@ -279,9 +278,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 //var_dump($result);
 
 // ITEM CHECKIN
-	$in 			= '';
 	$in 			= $mysip->msgCheckin($item,'');
-	$result 		= '';
 	$result 		= $mysip->parseCheckinResponse( $mysip->get_message($in) );
 	$alertType		= isset($result['variable']['CV']) ? implode($result['variable']['CV']) : '';
 	$destinationBranch	= isset($result['variable']['CT']) ? implode($result['variable']['CT']) : '';
@@ -337,7 +334,7 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 /* SIP2 CHECKOUT NOT CURRENTLY USED. MODIFY CIRCULATION API CHECKOUT INSTEAD
 // SIP2 CHECKOUT
 	$in 			= '';
-	$in 			= $mysip->msgCheckout($item,$nbduedate,'N','','N','Y','N'); // no block = 'Y'
+	$in 			= $mysip->msgCheckout($item,$duedate,'N','','N','Y','N'); // no block = 'Y'
 //	$in 			= $mysip->msgCheckout($item,1546300801,'N','','N','Y','N'); // no block = 'Y'
 //var_dump($in);
 // TO DO: SET 7 day DVD/Blu-Ray DUE DATE TO 10 DAYS FROM NOW[?] USING msgCheckout 2nd argv $nbDateDue, 18 char timestamp
@@ -373,12 +370,12 @@ function checkout($item, $alias = '', $nbduedate07 = '', $nbduedate21 = '', $nbd
 	$requestCheckoutItem->PatronSearchID		= $mysip->patron; // Patron ID
 	$requestCheckoutItem->ItemID			= $item; // Item Barcode
 	$requestCheckoutItem->Alias			= $alias; // Staffer alias
-	if (!empty($mediaName) && preg_match('/^(dvd|dvd, r-rated|blu-ray, circ 1-week|blu-ray, r-rated, circ 1-week)$/', $mediaName) === 1 && !empty($nbduedate07)) { // DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 7-DAY MOVIE MEDIA
-		$requestCheckoutItem->DueDate	= date_format($nbduedate07, 'Y-m-d');
-	} elseif (!empty($mysip->patron) && (strlen($mysip->patron) == 6 || strlen($mysip->patron) == 7) && !empty($nbduedate42)) { // DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 42-CHECKOUT FOR MNPS STAFF
-		$requestCheckoutItem->DueDate	= date_format($nbduedate42, 'Y-m-d');
-	} elseif (!empty($nbduedate21)) { // DUE DATE RECALCULATIONERATOR - HARD CODED BUCKET FOR 21-DAY CHECKOUT
-		$requestCheckoutItem->DueDate	= date_format($nbduedate21, 'Y-m-d');
+	if (!empty($mediaName) && preg_match('/^(dvd|dvd, r-rated|blu-ray, circ 1-week|blu-ray, r-rated, circ 1-week)$/', $mediaName) === 1 && !empty($duedate07)) { // DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 7-DAY MOVIE MEDIA
+		$requestCheckoutItem->DueDate	= date_format($duedate07, 'Y-m-d');
+	} elseif (!empty($mysip->patron) && (strlen($mysip->patron) == 6 || strlen($mysip->patron) == 7) && !empty($duedate42)) { // DUE DATE RECALCULATIONERATOR - HARD CODED TO RECOGNIZE 42-CHECKOUT FOR MNPS STAFF
+		$requestCheckoutItem->DueDate	= date_format($duedate42, 'Y-m-d');
+	} elseif (!empty($duedate21)) { // DUE DATE RECALCULATIONERATOR - HARD CODED BUCKET FOR 21-DAY CHECKOUT
+		$requestCheckoutItem->DueDate	= date_format($duedate21, 'Y-m-d');
 	}
 //var_dump($requestCheckoutItem);
 	$resultCheckoutItem				= '';
