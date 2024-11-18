@@ -207,7 +207,7 @@ if (!empty($duedate42)) {
 	$duedate42 = clone $arrivesDate;
 	$duedate42 = $duedate42->add(new DateInterval("P42D"));
 	$duedate42 = findNextMNPSOpenDate($mnpsClosedDates, $duedate42);
-	$duedate42 = min($duedate42, $endOfYearDueDate);
+//	$duedate42 = min($duedate42, $endOfYearDueDate); // commented out because staff 42 day checkouts should ignore end-of-year due dates 'cause we assume staff can get to NPL branches during summer break
 }
 
 $maxduedate = $duedate42;
