@@ -23,7 +23,7 @@
 
 // DEFINE MNPS DATES
 $endOfYearDueDate = new DateTime('2026-05-11');
-// MNPS closed dates, 2024-2025 school year. Must include all Saturdays and Sundays.
+// MNPS closed dates, 2025-2026 school year. Must include all Saturdays and Sundays.
 $mnpsClosedDates = [
 	'8/1/2025',
 	'8/2/2025',
@@ -81,6 +81,7 @@ $mnpsClosedDates = [
 	'12/7/2025',
 	'12/13/2025',
 	'12/14/2025',
+    '12/19/2025',
 	'12/20/2025',
 	'12/21/2025',
 	'12/22/2025',
@@ -117,6 +118,7 @@ $mnpsClosedDates = [
 	'2/22/2026',
 	'2/28/2026',
 	'3/1/2026',
+    '3/6/2026',
 	'3/7/2026',
 	'3/8/2026',
 	'3/9/2026',
@@ -144,6 +146,11 @@ $mnpsClosedDates = [
 	'5/5/2026',
 	'5/9/2026',
 	'5/10/2026',
+    '5/11/2026',
+    '5/12/2026',
+    '5/13/2026',
+    '5/14/2026',
+    '5/15/2026',
 	'5/16/2026',
 	'5/17/2026'
 ];
