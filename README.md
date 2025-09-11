@@ -22,28 +22,29 @@ Currently, this script is customized for Nashville's needs, and will only work w
 Learn more about the Limitless Libraries program at [Limitless Libraries](https://www.limitlesslibraries.org/about)
 
 ## Receipt Printer Setup
-**The following documentation outlines print configuration settings for the Firefox browser while using CIRCLL Web Client**
+Configuring Print Settings for Firefox Browser with CIRCLL Web Client
 
-**1. To set automatic printing:**
-  * Type `about:config` into the address bar.
-  * Right-click anywhere in the page.
-  * select **New** > **Boolean**
-  * Enter preference name: `print.always_print_silent`
-  * For now, set value to **false**.
+**1. To Enable Silent Printing (Automatic Printing without Dialog):**
+  * Type `about:config` into the address bar and press Enter.
+  * You may see a "Proceed with Caution" warning. Click "Accept the Risk and Continue" to proceed.
+  * In the search bar that appears, type `print.always_print_silent`.
+  * If this preference does not exist, you will see a button to "Add" or "Create" a new Boolean preference. Click this button.
+  * Ensure the value for `print.always_print_silent` is set to `false` for now. (You'll set it to `true` later).
 
-**2. Set default printer to the Re-Stick printer:**
-  * Go to `about:config`
-  * search for `print_printer`
-  * Right-click on the highlighted line
-  * select **Modify**
-  * Enter `EPSON TM-T88IV ReStick`
-  * Select **OK**
+**2. Set Default Printer to the Re-Stick Printer:**
+  * Go to `about:config` (if you're not already there).
+  * In the search bar, type `print_printer`.
+  * Locate the preference named `print.printer_name`.
+  * Right-click on the highlighted `print.printer_name` preference and select "Modify" (or double-click it).
+  * In the dialog box that appears, enter `EPSON TM-T88IV ReStick` as the value.
+  * Click "OK" or press Enter.
 
-**3. Finish settings**
-  * Search `print.always_print_silent`
-  * Double-click the highlighted line to set value to **true**
-  * Restart Firefox.
+**3. Finish Settings (Enable Automatic Silent Printing):**
+  * In the about:config search bar, type `print.always_print_silent`.
+  * Double-click the highlighted `print.always_print_silent` preference to toggle its value to `true`.
+  * Restart Firefox for the changes to take effect.
 
-**4. In Firefox, go to the circll page, e.g., ** https://circll.library.nashville.org/circll.php
+**4. In Firefox, go to: https://circll.library.nashville.org/circll.php**
 
-**5. Scan an item**
+**6. Scan an item**
+
