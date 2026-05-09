@@ -22,7 +22,7 @@
 // https://github.com/Nashville-Public-Library/circll
 
 // DEFINE MNPS DATES
-$endOfYearDueDate = new DateTime('2026-05-11');
+$endOfYearDueDate = new DateTime('2027-05-10');
 // MNPS closed dates, 2025-2026 school year. Must include all Saturdays and Sundays.
 $mnpsClosedDates = [
 	'8/1/2025',
